@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Cập nhật sản phẩm</title>
+</head>
+<body>
+    <div layout:fragment="content" class="container py-4" style="max-width: 950px;">
+        
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+            
+            <div class="card-header bg-dark text-white p-4 border-0 d-flex align-items-center">
+                <a th:href="@{/products}" class="btn btn-outline-light rounded-circle me-3 d-flex align-items-center justify-content-center transition-btn" style="width: 42px; height: 42px;">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h3 class="mb-0 fw-bold">Cập Nhật Sản Phẩm</h3>
+                    <small class="text-white-50">Chỉnh sửa thông tin chi tiết của sản phẩm trên hệ thống</small>
+                </div>
+            </div>
+
+            <div class="card-body p-4 p-md-5 bg-light">
+                
+                <div class="alert bg-white border-start border-warning border-4 shadow-sm mb-5 d-flex align-items-center p-3 rounded-3">
+                    <div class="bg-warning bg-opacity-10 p-2 rounded-circle me-3 text-center" style="width: 45px; height: 45px; line-height: 28px;">
+                        <i class="fa-solid fa-pen-to-square text-warning fs-5"></i>
+                    </div>
+                    <div>
+                        <strong class="d-block text-dark">Chỉnh sửa thông tin</strong>
+                        <span class="small text-muted">Thay đổi chi tiết bên dưới. Để trống ảnh nếu muốn giữ nguyên bức ảnh hiện tại.</span>
+                    </div>
+                </div>
+                
+                <form th:action="@{/products/edit}" th:object="${product}" method="post" enctype="multipart/form-data" class="needs-validation">
+                    
+                    <input type="hidden" th:field="*{id}"/>
+
+                    <div class="row g-4">
+                        
+                        <div class="col-lg-5 col-md-12">
+                            <div class="upload-container bg-white border border-2 border-dashed rounded-4 p-4 text-center h-100 d-flex flex-column justify-content-center align-items-center shadow-sm">
+                                
+                                <div th:if="${product.image}" class="mb-4 w-100">
+                                    <div class="position-relative d-inline-block p-2 border rounded-4 bg-light shadow-sm mb-3">
+                                        <img th:src="@{/images/{name}(name=${product.image})}" class="object-fit-contain rounded-3" style="max-height: 150px; max-width: 100%;" alt="Ảnh hiện tại"/>
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success border border-white p-2">
+                                            <i class="fa-solid fa-check"></i> Đang dùng
+                                        </span>
+                                    </div>
+                                    <p class="text-muted small fw-medium">Chọn tệp bên dưới để thay thế ảnh hiện tại.</p>
+                                </div>
+
+                                <div th:unless="${product.image}" class="mb-4">
+                                    <div class="icon-circle bg-primary bg-opacity-10 text-primary mb-3 mx-auto">
+                                        <i class="fa-solid fa-image" style="font-size: 2.5rem;"></i>
+                                    </div>
+                                    <p class="text-muted small fw-medium">Sản phẩm chưa có hình ảnh.</p>
+                                </div>
+                                
+                                <div class="w-100 text-start">
+                                    <input class="form-control form-control-sm bg-light" type="file" id="image" name="imageProduct" accept="image/png,image/jpeg,image/jpg,image/webp"/>
+                                    <div class="text-danger small mt-2 fw-medium" th:if="${#fields.hasErrors('image')}" th:errors="*{image}"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-7 col-md-12">
+                            <div class="bg-white p-4 p-md-5 rounded-4 shadow-sm h-100 border border-light-subtle">
+                                <h5 class="fw-bold mb-4 text-dark border-bottom pb-3"><i class="fa-solid fa-cube text-primary me-2"></i>Chi tiết sản phẩm</h5>
+                                
+                                <div class="mb-4">
+                                    <label for="name" class="form-label fw-semibold text-secondary small text-uppercase tracking-wide">Tên sản phẩm <span class="text-danger">*</span></label>
+                                    <div class="input-group input-group-lg shadow-none">
+                                        <span class="input-group-text bg-light border-0 text-muted"><i class="fa-solid fa-pen-nib"></i></span>
+                                        <input class="form-control border-0 bg-light focus-white" type="text" th:field="*{name}" id="name" placeholder="Ví dụ: Áo thun nam phong cách"/>
+                                    </div>
+                                    <div class="text-danger small mt-1 fw-medium" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="category" class="form-label fw-semibold text-secondary small text-uppercase tracking-wide">Danh mục <span class="text-danger">*</span></label>
+                                    <div class="input-group input-group-lg shadow-none">
+                                        <span class="input-group-text bg-light border-0 text-muted"><i class="fa-solid fa-layer-group"></i></span>
+                                        <select th:field="*{category.id}" class="form-select border-0 bg-light focus-white" id="category" name="category.id">
+                                            <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="text-danger small mt-1 fw-medium" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="price" class="form-label fw-semibold text-secondary small text-uppercase tracking-wide">Đơn giá <span class="text-danger">*</span></label>
+                                    <div class="input-group input-group-lg shadow-none">
+                                        <span class="input-group-text bg-light border-0 text-muted"><i class="fa-solid fa-tag"></i></span>
+                                        <input class="form-control border-0 bg-light focus-white fw-bold text-primary" type="number" th:field="*{price}" id="price" placeholder="0" min="1"/>
+                                        <span class="input-group-text bg-light border-0 fw-bold text-secondary">VNĐ</span>
+                                    </div>
+                                    <div class="text-danger small mt-1 fw-medium" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end gap-3 mt-4 pt-4 border-top border-secondary border-opacity-10">
+                        <a th:href="@{/products}" class="btn btn-light px-4 py-2 fw-bold rounded-pill border transition-btn">
+                            <i class="fa-solid fa-xmark me-2"></i>Hủy bỏ
+                        </a>
+                        <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill shadow-sm d-flex align-items-center transition-btn">
+                            <i class="fa-solid fa-floppy-disk me-2"></i>Lưu thay đổi
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <style>
+            .border-dashed { 
+                border-style: dashed !important; 
+                border-color: #cbd5e1 !important; 
+            }
+            .upload-container {
+                transition: all 0.3s ease;
+            }
+            .upload-container:hover { 
+                border-color: #0d6efd !important; 
+                background-color: #f8fafc !important; 
+            }
+            .icon-circle { 
+                width: 70px; 
+                height: 70px; 
+                border-radius: 50%; 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+            }
+            .tracking-wide {
+                letter-spacing: 0.5px;
+            }
+            /* Hiệu ứng focus cho input */
+            .focus-white:focus { 
+                background-color: #ffffff !important; 
+                box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15) !important;
+            }
+            /* Hiệu ứng nhấc nút lên khi hover */
+            .transition-btn {
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+            .transition-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+            }
+        </style>
+    </div>
+</body>
+</html>

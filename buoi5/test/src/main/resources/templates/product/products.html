@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{_layout}">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Danh sách sản phẩm</title>
+</head>
+<body>
+    <div layout:fragment="content" class="container-fluid" style="max-width: 1200px;">
+        
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden mb-5">
+            <div class="card-header bg-dark text-white p-4 border-0 d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div>
+                    <h3 class="mb-1 fw-bold"><i class="fa-solid fa-boxes-stacked me-2 text-primary"></i>Danh sách sản phẩm</h3>
+                    <small class="text-white-50">Xem, tìm kiếm danh sách sản phẩm của cửa hàng</small>
+                </div>
+                <a sec:authorize="hasAuthority('ROLE_ADMIN')" th:href="@{/products/create}" class="btn btn-primary shadow-sm px-4 py-2 rounded-pill d-flex align-items-center transition-btn">
+                    <i class="fa-solid fa-plus me-2"></i> <span class="fw-bold">Thêm sản phẩm mới</span>
+                </a>
+            </div>
+
+            <div class="card-body p-0 bg-white">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 custom-table">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4 py-3 text-muted text-uppercase fw-semibold" style="font-size: 0.75rem; letter-spacing: 0.5px; width: 80px;">ID</th>
+                                <th class="py-3 text-muted text-uppercase fw-semibold" style="font-size: 0.75rem; letter-spacing: 0.5px; width: 100px;">Hình ảnh</th>
+                                <th class="py-3 text-muted text-uppercase fw-semibold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Sản phẩm</th>
+                                <th class="py-3 text-muted text-uppercase fw-semibold" style="font-size: 0.75rem; letter-spacing: 0.5px; width: 150px;">Giá bán</th>
+                                <th class="py-3 text-muted text-uppercase fw-semibold" style="font-size: 0.75rem; letter-spacing: 0.5px; width: 180px;">Danh mục</th>
+                                <th sec:authorize="hasAuthority('ROLE_ADMIN')" class="pe-4 py-3 text-muted text-uppercase fw-semibold text-end" style="font-size: 0.75rem; letter-spacing: 0.5px; width: 120px;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="product : ${listproduct}" class="table-row-hover">
+                                <td class="ps-4 text-muted fw-medium fs-6">#<span th:text="${product.id}"></span></td>
+                                <td>
+                                    <div class="img-thumbnail-wrapper">
+                                        <img th:if="${product.image}" th:src="@{/images/{name}(name=${product.image})}" alt="SP"/>
+                                        <div th:unless="${product.image}" class="img-placeholder">
+                                            <i class="fa-regular fa-image"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <h6 class="mb-0 fw-bold text-dark fs-6" th:text="${product.name}"></h6>
+                                </td>
+                                <td>
+                                    <span class="price-badge">
+                                        <span th:text="${#numbers.formatInteger(product.price, 3, 'POINT')}"></span> <small>₫</small>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="category-badge" th:text="${product.category != null ? product.category.name : 'Chưa phân loại'}"></span>
+                                </td>
+                                <td sec:authorize="hasAuthority('ROLE_ADMIN')" class="pe-4 text-end">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a th:href="@{/products/edit/{id}(id=${product.id})}" class="action-btn action-edit" title="Chỉnh sửa">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+                                        <a th:href="@{/products/delete/{id}(id=${product.id})}" class="action-btn action-delete" onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này? Thao tác không thể hoàn tác.');" title="Xóa">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <tr th:if="${#lists.isEmpty(listproduct)}">
+                                <td colspan="6" class="text-center py-5 bg-white">
+                                    <div class="empty-state py-4">
+                                        <div class="empty-icon mb-3 text-primary opacity-50">
+                                            <i class="fa-solid fa-box-open" style="font-size: 4rem;"></i>
+                                        </div>
+                                        <h5 class="fw-bold text-dark mb-2">Chưa có sản phẩm nào</h5>
+                                        <p class="text-muted mb-4">Danh sách sản phẩm hiện đang trống.</p>
+                                        <a sec:authorize="hasAuthority('ROLE_ADMIN')" th:href="@{/products/create}" class="btn btn-primary px-4 shadow-sm rounded-pill transition-btn">
+                                            <i class="fa-solid fa-plus me-1"></i> Thêm sản phẩm ngay
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .custom-table th { border-bottom: 2px solid #e2e8f0; background-color: #f8fafc; }
+            .custom-table td { vertical-align: middle; border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s ease; }
+            .table-row-hover:hover td { background-color: rgba(13, 110, 253, 0.03); }
+            .img-thumbnail-wrapper { width: 60px; height: 60px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); background: #f8fafc; display: flex; align-items: center; justify-content: center; }
+            .img-thumbnail-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+            .table-row-hover:hover .img-thumbnail-wrapper img { transform: scale(1.1); }
+            .img-placeholder { color: #cbd5e1; font-size: 1.25rem; }
+            .price-badge { display: inline-block; background: rgba(13, 110, 253, 0.1); color: #0d6efd; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 8px; }
+            .category-badge { display: inline-block; background: #f1f5f9; color: #475569; font-size: 0.85rem; font-weight: 500; padding: 0.35rem 0.75rem; border-radius: 99px; border: 1px solid #e2e8f0; }
+            .action-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px; transition: all 0.2s ease; background: #f8fafc; border: 1px solid #e2e8f0; color: #64748b; }
+            .action-edit:hover { background: #0d6efd; color: white; border-color: #0d6efd; transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(13, 110, 253, 0.2); }
+            .action-delete:hover { background: #ef4444; color: white; border-color: #ef4444; transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2); }
+            .transition-btn { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+            .transition-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3) !important; }
+        </style>
+    </div>
+</body>
+</html>

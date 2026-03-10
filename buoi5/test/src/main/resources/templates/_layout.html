@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title layout:title-pattern="$CONTENT_TITLE - VHYY">VHYY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <style>
+        :root {
+            --primary-color: #0d6efd; 
+            --primary-light: #3b82f6;
+            --secondary-color: #64748b;
+            --bg-color: #f4f6f9; 
+            --surface-color: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+        .navbar-custom { background-color: var(--surface-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03); }
+        .navbar-brand { font-weight: 800; font-size: 1.8rem; color: var(--primary-color) !important; letter-spacing: -0.5px; display: flex; align-items: center; gap: 0.5rem; }
+        .search-wrapper { width: 100%; max-width: 500px; }
+        .search-box { border: 2px solid var(--primary-color); border-radius: 99px; overflow: hidden; background: #fff; box-shadow: 0 2px 5px rgba(13, 110, 253, 0.1); }
+        .search-input { border: none !important; box-shadow: none !important; padding: 0.6rem 1.5rem; font-size: 0.95rem; }
+        .search-btn { background: var(--primary-color); color: white; border: none; padding: 0 1.5rem; transition: all 0.2s; }
+        .search-btn:hover { background: var(--primary-light); }
+        .nav-link { color: var(--text-main) !important; font-weight: 600; padding: 0.5rem 1rem !important; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.5rem; }
+        .nav-link:hover { color: var(--primary-color) !important; }
+        .nav-btn-add { background-color: var(--primary-color); color: white !important; border-radius: 99px; padding: 0.6rem 1.2rem !important; box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2); }
+        .nav-btn-add:hover { background-color: #0b5ed7; color: white !important; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(13, 110, 253, 0.3); }
+        .main-content { flex: 1; padding: 2.5rem 0; animation: fadeIn 0.4s ease-out forwards; max-width: 1400px; margin: 0 auto; width: 100%; }
+        .footer { background: var(--surface-color); border-top: 1px solid var(--border-color); padding: 2rem 0; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container-fluid px-4 px-lg-5">
+            <a class="navbar-brand" th:href="@{/products}">
+                <i class="fa-solid fa-layer-group"></i> VHYY
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <div class="mx-auto search-wrapper mt-3 mt-lg-0">
+                    <form role="search" th:action="@{/products}" th:method="get">
+                        <div class="input-group search-box">
+                            <input class="form-control search-input" type="search" name="q" placeholder="Tìm kiếm sản phẩm trên VHYY..." autocomplete="off"/>
+                            <button class="search-btn" type="submit">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-2 mt-3 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/products}">
+                            <i class="fa-solid fa-house"></i> Trang chủ
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasAuthority('ROLE_ADMIN')">
+                        <a class="nav-link nav-btn-add" th:href="@{/products/create}">
+                            <i class="fa-solid fa-plus fw-bold"></i> Thêm sản phẩm
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <form th:action="@{/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-link nav-link text-danger border-0 text-decoration-none">
+                                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <main layout:fragment="content" class="main-content px-4 px-lg-5">
+    </main>
+    <footer class="footer mt-auto">
+        <div class="container">
+            <p class="mb-1 fw-bold text-dark">VHYY - Nền tảng mua sắm trực tuyến</p>
+            <p class="mb-0">&copy; 2026 - Phát triển bằng Spring Boot & J2EE</p>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
