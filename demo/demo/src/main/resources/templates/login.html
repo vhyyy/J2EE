@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng nhập</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/home}">Course Registration</a>
+            <a th:href="@{/register}" class="btn btn-outline-light">Đăng ký</a>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div th:if="${param.success}" class="alert alert-success text-center shadow-sm">
+                    Đăng ký thành công! Vui lòng đăng nhập.
+                </div>
+                <div th:if="${param.error}" class="alert alert-danger text-center shadow-sm">
+                    Sai tên đăng nhập hoặc mật khẩu!
+                </div>
+                <div th:if="${param.logout}" class="alert alert-info text-center shadow-sm">
+                    Bạn đã đăng xuất thành công.
+                </div>
+
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-success text-white text-center py-3">
+                        <h4 class="mb-0">Đăng nhập Hệ thống</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <form th:action="@{/login}" method="post">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Username:</label>
+                                <input type="text" class="form-control" name="username" placeholder="Nhập tên đăng nhập" required autofocus>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Password:</label>
+                                <input type="password" class="form-control" name="password" placeholder="Nhập mật khẩu" required>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success btn-lg">Đăng nhập</button>
+                            </div>
+                        </form>
+
+                        <hr class="my-4">
+
+                        <div class="text-center">
+                            <p class="mb-1 text-muted">Chưa có tài khoản?</p>
+                            <a th:href="@{/register}" class="text-decoration-none fw-bold">Đăng ký thành viên mới tại đây</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a th:href="@{/home}" class="btn btn-link text-secondary">← Quay lại Trang chủ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
