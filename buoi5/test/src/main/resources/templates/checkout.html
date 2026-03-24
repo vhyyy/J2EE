@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{_layout}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán - VHYY</title>
+</head>
+<body>
+    <div layout:fragment="content" class="container" style="max-width: 600px; margin-top: 50px;">
+        <div class="card shadow-lg border-0 rounded-4 p-4">
+            <h3 class="text-center text-primary fw-bold mb-4"><i class="fa-solid fa-truck-fast me-2"></i>Thông tin Giao hàng</h3>
+            <div class="alert alert-info text-center fw-bold fs-5 mb-4">
+                Tổng thanh toán: <span class="text-danger" th:text="${#numbers.formatInteger(totalPrice, 3, 'POINT')}"></span> ₫
+            </div>
+            <form th:action="@{/checkout}" method="post">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Họ và Tên người nhận</label>
+                    <input type="text" name="customerName" class="form-control" required placeholder="Nhập họ tên...">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Số điện thoại</label>
+                    <input type="text" name="phone" class="form-control" required placeholder="Nhập số điện thoại...">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Địa chỉ giao hàng chi tiết</label>
+                    <textarea name="address" class="form-control" rows="3" required placeholder="Số nhà, Tên đường, Phường/Xã, Quận/Huyện..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-success w-100 fw-bold py-2 rounded-pill fs-5 shadow-sm">
+                    Xác nhận Đặt hàng
+                </button>
+                <a th:href="@{/cart}" class="btn btn-light w-100 mt-2 rounded-pill fw-medium border">Quay lại Giỏ hàng</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -2,6 +2,10 @@ package phattrienungdung2ee.webbanhang.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -9,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import phattrienungdung2ee.webbanhang.model.Category;
 import phattrienungdung2ee.webbanhang.model.Product;
+import phattrienungdung2ee.webbanhang.repository.ProductRepository;
 import phattrienungdung2ee.webbanhang.service.CategoryService;
 import phattrienungdung2ee.webbanhang.service.ProductService;
 
@@ -22,11 +27,50 @@ public class ProductController {
     @Autowired
     private CategoryService categoryService;
 
+    // Thêm Repository để dùng hàm searchAndFilter (Câu 1, 2, 3, 4)
+    @Autowired
+    private ProductRepository productRepository;
+
+    // ĐÃ CẬP NHẬT: Hàm hiển thị danh sách tích hợp Tìm kiếm, Lọc, Sắp xếp và Phân trang
     @GetMapping
-    public String index(Model model) {
-        model.addAttribute("listproduct", productService.getAll());
-        return "product/products";
+    public String index(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "categoryId", required = false) Long categoryId,
+            @RequestParam(name = "sort", defaultValue = "default") String sort,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            Model model) {
+
+        // --- CÂU 3: Xử lý Sắp xếp ---
+        Sort sortable = Sort.by("id").descending(); 
+        if ("priceAsc".equals(sort)) {
+            sortable = Sort.by("price").ascending();
+        } else if ("priceDesc".equals(sort)) {
+            sortable = Sort.by("price").descending();
+        }
+
+        // --- CÂU 2: Xử lý Phân trang (5 sản phẩm / 1 trang) ---
+        Pageable pageable = PageRequest.of(page - 1, 5, sortable);
+
+        // --- CÂU 1 & CÂU 4: Gọi DB để Tìm kiếm và Lọc ---
+        Page<Product> productPage = productRepository.searchAndFilter(keyword, categoryId, pageable);
+
+        // Đẩy dữ liệu ra ngoài Giao diện
+        model.addAttribute("listproduct", productPage.getContent());
+        model.addAttribute("categories", categoryService.getAll());
+        
+        // Đẩy các tham số trạng thái ra ngoài để HTML giữ được lựa chọn khi lật trang
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("sort", sort);
+
+        return "product/products"; // Giữ đúng đường dẫn file HTML cũ của bạn
     }
+
+    // ==========================================
+    // CÁC HÀM BÊN DƯỚI ĐƯỢC GIỮ NGUYÊN 100%
+    // ==========================================
 
     @GetMapping("/create")
     public String create(Model model) {

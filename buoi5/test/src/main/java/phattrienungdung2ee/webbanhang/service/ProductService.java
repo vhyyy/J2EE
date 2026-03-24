@@ -27,7 +27,8 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Product get(int id) {
+    // Đã sửa: int -> long để khớp với ProductRepository
+    public Product get(long id) {
         return productRepository.findById(id).orElse(null);
     }
 
@@ -37,7 +38,9 @@ public class ProductService {
 
     public void update(Product editProduct) {
         if (editProduct.getId() == null) return;
-        Product find = get(editProduct.getId());
+        
+        // Đã sửa: Ép kiểu an toàn sang long
+        Product find = get(editProduct.getId().longValue()); 
         if (find != null) {
             find.setPrice(editProduct.getPrice());
             find.setName(editProduct.getName());
@@ -49,7 +52,8 @@ public class ProductService {
         }
     }
 
-    public void delete(int id) {
+    // Đã sửa: int -> long để khớp với ProductRepository
+    public void delete(long id) {
         productRepository.deleteById(id);
     }
 
